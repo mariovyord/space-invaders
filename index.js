@@ -84,6 +84,28 @@ class Projectile {
     }
 }
 
+class Particle {
+    constructor({ position, velocity, radius, color }) {
+        this.position = position;
+        this.velocity = velocity;
+        this.radius = radius;
+        this.color = color;
+    }
+
+    draw() {
+        c.beginPath()
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+        c.fillStyle = this.color;
+        c.fill()
+        c.closePath()
+    }
+    update() {
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+}
+
 class InvaderProjectile {
     constructor({ position, velocity }) {
         this.position = position;
@@ -196,9 +218,12 @@ class Grid {
     }
 }
 
+
+
 const player = new Player();
 const projectiles = [];
 const grids = [];
+const particles = [];
 const invaderProjectiles = [];
 
 // button press 
@@ -227,6 +252,11 @@ function animate() {
 
     // update player
     player.update()
+
+    // update particles
+    particles.forEach(particle => {
+        particle.update()
+    })
 
     // update projectiles
     invaderProjectiles.forEach((invaderProjectile, invaderProjectilesIndex) => {
@@ -269,7 +299,7 @@ function animate() {
         grid.invaders.forEach((invader, invaderIndex) => {
             invader.update({ velocity: grid.velocity })
 
-            // collision detection
+            // projectiles hit enemies
             projectiles.forEach((projectile, projectileIndex) => {
                 if (projectile.position.y - projectile.radius <= invader.position.y + invader.height
                     && projectile.position.x + projectile.radius >= invader.position.x
@@ -282,6 +312,24 @@ function animate() {
 
                         // remove invader and projectile
                         if (invaderFound && projectileFound) {
+                            // create particles on destroyed enemy
+                            for (let i = 0; i < 15; i++) {
+                                particles.push(new Particle(
+                                    {
+                                        position: {
+                                            x: invader.position.x + invader.width / 2,
+                                            y: invader.position.y + invader.height / 2,
+                                        },
+                                        velocity: {
+                                            x: (Math.random() - 0.5) * 2,
+                                            y: (Math.random() - 0.5) * 2,
+                                        },
+                                        radius: Math.random() * 3,
+                                        color: '#BAA0DE',
+                                    }
+                                ))
+                            }
+
                             grid.invaders.splice(invaderIndex, 1)
                             projectiles.splice(projectileIndex, 1)
 
