@@ -66,7 +66,7 @@ class Projectile {
     constructor({ position, velocity }) {
         this.position = position;
         this.velocity = velocity;
-        this.radius = 3;
+        this.radius = 4;
     }
 
     draw() {
@@ -200,10 +200,30 @@ function animate() {
         }
     })
 
+    // update grid
     grids.forEach(grid => {
         grid.update()
-        grid.invaders.forEach(invader => {
+        grid.invaders.forEach((invader, invaderIndex) => {
             invader.update({ velocity: grid.velocity })
+
+            // collision detection
+            projectiles.forEach((projectile, projectileIndex) => {
+                if (projectile.position.y - projectile.radius <= invader.position.y + invader.height
+                    && projectile.position.x + projectile.radius >= invader.position.x
+                    && projectile.position.x - projectile.radius <= invader.position.x + invader.width
+                    && projectile.position.y + projectile.radius >= invader.position.y
+                ) {
+                    setTimeout(() => {
+                        const invaderFound = grid.invaders.find(currentInvader => currentInvader === invader)
+                        const projectileFound = projectiles.find(currentProjectile => currentProjectile === projectile)
+
+                        if (invaderFound && projectileFound) {
+                            grid.invaders.splice(invaderIndex, 1)
+                            projectiles.splice(projectileIndex, 1)
+                        }
+                    }, 0)
+                }
+            })
         })
     })
 
