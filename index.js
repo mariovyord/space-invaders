@@ -3,6 +3,7 @@ const c = canvas?.getContext('2d');
 
 const PLAYER_SPEED = 7;
 const PLAYER_ROTATION = 0.15;
+const PROJECTILE_SPEED = -15;
 
 // Set canvas size
 canvas.width = window.innerWidth - 5;
@@ -81,6 +82,8 @@ class Projectile {
 }
 
 const player = new Player();
+const projectiles = [];
+
 const keys = {
     a: {
         pressed: false,
@@ -93,11 +96,21 @@ const keys = {
     },
 }
 
+// game loop
 function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
     player.update()
+    projectiles.forEach((projectile, i) => {
+        if (projectile.position.y + projectile.radius <= 0) {
+            setTimeout(() => {
+                projectiles.splice(i, 1)
+            }, 0)
+        } else {
+            projectile.update();
+        }
+    })
 
     if (keys.a.pressed && player.position.x >= 0) {
         player.velocity.x = -Math.abs(PLAYER_SPEED);
@@ -125,6 +138,17 @@ window.addEventListener('keydown', (e) => {
             break;
         case ' ':
             keys.space.pressed = true;
+            projectiles.push(
+                new Projectile({
+                    position: {
+                        x: player.position.x + player.width / 2,
+                        y: player.position.y,
+                    },
+                    velocity: {
+                        x: 0,
+                        y: PROJECTILE_SPEED,
+                    }
+                }))
             break;
     }
 })
