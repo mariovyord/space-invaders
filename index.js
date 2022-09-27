@@ -12,6 +12,8 @@ const IMAGE_HEIGHT = 30;
 canvas.width = window.innerWidth - 5;
 canvas.height = window.innerHeight - 5;
 
+const scoreElement = document.querySelector('.score');
+
 class Player {
     constructor() {
         this.velocity = {
@@ -257,7 +259,6 @@ let game = {
     active: true,
 }
 
-
 for (let i = 0; i < 100; i++) {
     particles.push(
         new Particle(
@@ -295,6 +296,8 @@ function createParticles({ object, color = '#BAA0DE', fades }) {
         ))
     }
 }
+
+let score = 0;
 
 // game loop
 function animate() {
@@ -401,6 +404,9 @@ function animate() {
                         // remove invader and projectile
                         if (invaderFound && projectileFound) {
                             // create particles on destroyed enemy
+                            score += 100;
+                            scoreElement.textContent = score;
+
                             createParticles({
                                 object: invader,
                                 fades: true,
