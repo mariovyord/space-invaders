@@ -1,6 +1,9 @@
 const canvas = document.querySelector('canvas');
 const c = canvas?.getContext('2d');
 
+const PLAYER_SPEED = 7;
+const PLAYER_ROTATION = 0.15;
+
 // Set canvas size
 canvas.width = window.innerWidth - 5;
 canvas.height = window.innerHeight - 5;
@@ -11,6 +14,8 @@ class Player {
             x: 0,
             y: 0,
         };
+
+        this.rotation = 0;
 
         const image = new Image();
         image.src = './assets/spaceship.png'
@@ -30,13 +35,24 @@ class Player {
     draw() {
         // c.fillStyle = 'red';
         // c.fillRect(this.position.x, this.position.y, this.width, this.height);
-        if (this.image) {
-            c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
-        }
+        c.save()
+        c.translate(
+            player.position.x + (player.width / 2),
+            player.position.y + (player.height / 2)
+        )
+        c.rotate(this.rotation)
+
+        c.translate(
+            -player.position.x - (player.width / 2),
+            -player.position.y - (player.height / 2)
+        )
+
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
+        c.restore()
     }
     update() {
         if (this.image) {
-            this.draw();
+            this.draw()
             this.position.x += this.velocity.x;
         }
     }
@@ -63,11 +79,14 @@ function animate() {
     player.update()
 
     if (keys.a.pressed && player.position.x >= 0) {
-        player.velocity.x = -5;
+        player.velocity.x = -Math.abs(PLAYER_SPEED);
+        player.rotation = -Math.abs(PLAYER_ROTATION);
     } else if (keys.d.pressed && player.position.x + player.width <= canvas.width) {
-        player.velocity.x = 5;
+        player.velocity.x = PLAYER_SPEED;
+        player.rotation = PLAYER_ROTATION;
     } else {
         player.velocity.x = 0;
+        player.rotation = 0;
     }
 }
 
