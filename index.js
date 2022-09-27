@@ -18,6 +18,7 @@ class Player {
             x: 0,
             y: 0,
         };
+        this.opacity = 1;
 
         this.rotation = 0;
 
@@ -40,6 +41,7 @@ class Player {
         // c.fillStyle = 'red';
         // c.fillRect(this.position.x, this.position.y, this.width, this.height);
         c.save()
+        c.globalAlpha = this.opacity;
         c.translate(
             player.position.x + (player.width / 2),
             player.position.y + (player.height / 2)
@@ -250,6 +252,11 @@ const keys = {
 let frames = 0;
 // interval for spawning enemies
 let randomInterval = Math.trunc((Math.random() * 500) + 500);
+let game = {
+    over: false,
+    active: true,
+}
+
 
 for (let i = 0; i < 100; i++) {
     particles.push(
@@ -291,6 +298,8 @@ function createParticles({ object, color = '#BAA0DE', fades }) {
 
 // game loop
 function animate() {
+    if (!game.active) return;
+
     requestAnimationFrame(animate);
 
     c.fillStyle = 'black';
@@ -336,7 +345,16 @@ function animate() {
             // remove projectile that hits player
             setTimeout(() => {
                 invaderProjectiles.splice(invaderProjectilesIndex, 1)
-            })
+                player.opacity = 0;
+                game.over = true;
+            }, 0)
+
+            setTimeout(() => {
+                invaderProjectiles.splice(invaderProjectilesIndex, 1)
+                player.opacity = 0;
+                game.active = false;
+            }, 2000)
+
             // player particles
             createParticles({
                 object: player,
@@ -433,6 +451,8 @@ animate();
 
 // move player
 window.addEventListener('keydown', (e) => {
+    if (game.over) return;
+
     const key = e.key;
 
     switch (key) {
