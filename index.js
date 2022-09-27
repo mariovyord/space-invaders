@@ -85,12 +85,13 @@ class Projectile {
 }
 
 class Particle {
-    constructor({ position, velocity, radius, color }) {
+    constructor({ position, velocity, radius, color, fades }) {
         this.position = position;
         this.velocity = velocity;
         this.radius = radius;
         this.color = color;
         this.opacity = 1;
+        this.fades = fades;
     }
 
     draw() {
@@ -107,7 +108,9 @@ class Particle {
         this.draw();
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
-        this.opacity -= 0.01;
+        if (this.fades) {
+            this.opacity -= 0.01;
+        }
     }
 }
 
@@ -115,7 +118,7 @@ class InvaderProjectile {
     constructor({ position, velocity }) {
         this.position = position;
         this.velocity = velocity;
-        this.width = 3;
+        this.width = 4;
         this.height = 10;
     }
 
@@ -248,7 +251,25 @@ let frames = 0;
 // interval for spawning enemies
 let randomInterval = Math.trunc((Math.random() * 500) + 500);
 
-function createParticles({ object, color = '#BAA0DE' }) {
+for (let i = 0; i < 100; i++) {
+    particles.push(
+        new Particle(
+            {
+                position: {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                },
+                velocity: {
+                    x: 0,
+                    y: 0.3,
+                },
+                radius: Math.random() * 2,
+                color: 'white',
+            }
+        ))
+}
+
+function createParticles({ object, color = '#BAA0DE', fades }) {
     for (let i = 0; i < 15; i++) {
         particles.push(new Particle(
             {
@@ -262,6 +283,7 @@ function createParticles({ object, color = '#BAA0DE' }) {
                 },
                 radius: Math.random() * 3,
                 color: color,
+                fades: fades
             }
         ))
     }
@@ -279,6 +301,12 @@ function animate() {
 
     // update particles
     particles.forEach((particle, particleIndex) => {
+        if (particle.position.y - particle.radius >= canvas.height) {
+            particle.position.x = Math.random() * canvas.width;
+            particle.position.y = -particle.radius;
+
+        }
+
         if (particle.opacity <= 0) {
             setTimeout(() => {
                 // clear particles
@@ -312,7 +340,8 @@ function animate() {
             // player particles
             createParticles({
                 object: player,
-                color: 'red'
+                color: 'red',
+                fades: true
             })
         }
     })
@@ -356,6 +385,7 @@ function animate() {
                             // create particles on destroyed enemy
                             createParticles({
                                 object: invader,
+                                fades: true,
                             })
 
                             grid.invaders.splice(invaderIndex, 1)
