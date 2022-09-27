@@ -18,16 +18,20 @@ class Player {
 
         const image = new Image();
         image.src = './assets/spaceship.png'
-
-        this.image = image;
-        this.width = 100;
-        this.height = 100;
+        image.onload = () => {
+            const scale = 0.15;
+            this.image = image;
+            this.width = image.width * scale;
+            this.height = image.height * scale;
+        }
     }
 
     draw() {
         // c.fillStyle = 'red';
         // c.fillRect(this.position.x, this.position.y, this.width, this.height);
-        c.drawImage(this.image, this.position.x, this.position.y);
+        if (this.image) {
+            c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        }
     }
 
 }
