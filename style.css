@@ -4,7 +4,7 @@ body {
 }
 
 .score-box {
-    position: fixed;
+    position: absolute;
     z-index: 100;
     color: white;
     margin: 0;
@@ -12,4 +12,17 @@ body {
     font-size: 14px;
     left: 10px;
     top: 10px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: black;
+}
+
+.canvas-box {
+    position: relative;
+    border: 2px solid white;
 }

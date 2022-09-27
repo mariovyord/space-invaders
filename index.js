@@ -9,8 +9,8 @@ const IMAGE_WIDTH = 30;
 const IMAGE_HEIGHT = 30;
 
 // Set canvas size
-canvas.width = window.innerWidth - 5;
-canvas.height = window.innerHeight - 5;
+canvas.width = 1024;
+canvas.height = 576;
 
 const scoreElement = document.querySelector('.score');
 
