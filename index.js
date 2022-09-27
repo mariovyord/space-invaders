@@ -1,236 +1,20 @@
-const canvas = document.querySelector('canvas');
-const c = canvas?.getContext('2d');
+import { Player } from "./src/classes/Player.js";
+import { Particle } from "./src/classes/Particle.js";
+import { Grid } from "./src/classes/Grid.js";
+import { Invader } from "./src/classes/Invader.js";
+import { InvaderProjectile } from "./src/classes/InvaderProjectile.js";
+import { Projectile } from "./src/classes/Projectile.js";
 
-// constants
-const PLAYER_SPEED = 7;
-const PLAYER_ROTATION = 0.15;
-const PROJECTILE_SPEED = -15;
-const IMAGE_WIDTH = 30;
-const IMAGE_HEIGHT = 30;
-
-// Set canvas size
-canvas.width = 1024;
-canvas.height = 576;
+import { c, canvas } from "./src/canvas.js";
+import {
+    PLAYER_SPEED,
+    PLAYER_ROTATION,
+    PROJECTILE_SPEED,
+    IMAGE_WIDTH,
+    IMAGE_HEIGHT
+} from "./src/constants.js";
 
 const scoreElement = document.querySelector('.score');
-
-class Player {
-    constructor() {
-        this.velocity = {
-            x: 0,
-            y: 0,
-        };
-        this.opacity = 1;
-
-        this.rotation = 0;
-
-        const image = new Image();
-        image.src = './assets/spaceship.png'
-        image.onload = () => {
-            const scale = 0.15;
-            this.image = image;
-            this.width = image.width * scale;
-            this.height = image.height * scale;
-
-            this.position = {
-                x: canvas.width / 2 - this.width / 2,
-                y: canvas.height - (image.height * scale) - 30,
-            };
-        }
-    }
-
-    draw() {
-        // c.fillStyle = 'red';
-        // c.fillRect(this.position.x, this.position.y, this.width, this.height);
-        c.save()
-        c.globalAlpha = this.opacity;
-        c.translate(
-            player.position.x + (player.width / 2),
-            player.position.y + (player.height / 2)
-        )
-        c.rotate(this.rotation)
-
-        c.translate(
-            -player.position.x - (player.width / 2),
-            -player.position.y - (player.height / 2)
-        )
-
-        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
-        c.restore()
-    }
-    update() {
-        if (this.image) {
-            this.draw()
-            this.position.x += this.velocity.x;
-        }
-    }
-
-}
-
-class Projectile {
-    constructor({ position, velocity }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.radius = 4;
-    }
-
-    draw() {
-        c.beginPath()
-        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
-        c.fillStyle = 'red';
-        c.fill()
-        c.closePath()
-    }
-    update() {
-        this.draw();
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-    }
-}
-
-class Particle {
-    constructor({ position, velocity, radius, color, fades }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.radius = radius;
-        this.color = color;
-        this.opacity = 1;
-        this.fades = fades;
-    }
-
-    draw() {
-        c.save()
-        c.globalAlpha = this.opacity;
-        c.beginPath()
-        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
-        c.fillStyle = this.color;
-        c.fill()
-        c.closePath()
-        c.restore()
-    }
-    update() {
-        this.draw();
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-        if (this.fades) {
-            this.opacity -= 0.01;
-        }
-    }
-}
-
-class InvaderProjectile {
-    constructor({ position, velocity }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.width = 4;
-        this.height = 10;
-    }
-
-    draw() {
-        c.fillStyle = 'white';
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
-    }
-
-    update() {
-        this.draw();
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-    }
-}
-
-class Invader {
-    constructor({ position }) {
-        this.velocity = {
-            x: 0,
-            y: 0,
-        };
-
-        const image = new Image();
-        image.src = './assets/invader.png'
-        image.onload = () => {
-            const scale = 1;
-            this.image = image;
-            this.width = image.width * scale;
-            this.height = image.height * scale;
-
-            this.position = {
-                x: position.x,
-                y: position.y,
-            };
-        }
-    }
-
-    draw() {
-        // c.fillStyle = 'red';
-        // c.fillRect(this.position.x, this.position.y, this.width, this.height);
-        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
-    }
-    update({ velocity }) {
-        if (this.image) {
-            this.draw()
-            this.position.x += velocity.x;
-            this.position.y += velocity.y;
-        }
-    }
-    shoot(invaderProjectiles) {
-        invaderProjectiles.push(new InvaderProjectile(
-            {
-                position: {
-                    x: this.position.x + this.width / 2,
-                    y: this.position.y + this.height,
-                },
-                velocity: {
-                    x: 0,
-                    y: 5,
-                }
-            }
-        ))
-    }
-}
-
-class Grid {
-    constructor() {
-        this.position = {
-            x: 0,
-            y: 0,
-        }
-        this.velocity = {
-            x: 3,
-            y: 0,
-        }
-        this.invaders = [];
-
-
-        const columns = Math.floor(Math.random() * 10 + 5);
-        const rows = Math.floor(Math.random() * 5 + 2);
-
-        this.width = columns * IMAGE_WIDTH;
-
-        for (let i = 0; i < columns; i++) {
-            for (let j = 0; j < rows; j++) {
-                this.invaders.push(new Invader({
-                    position: {
-                        x: i * IMAGE_WIDTH,
-                        y: j * IMAGE_HEIGHT,
-                    }
-                }))
-            }
-        }
-    }
-
-    update() {
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
-        this.velocity.y = 0;
-
-        if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
-            this.velocity.x = -this.velocity.x;
-            this.velocity.y += IMAGE_HEIGHT;
-        }
-    }
-}
-
-
 
 const player = new Player();
 const projectiles = [];
@@ -254,7 +38,7 @@ const keys = {
 let frames = 0;
 // interval for spawning enemies
 let randomInterval = Math.trunc((Math.random() * 500) + 500);
-let game = {
+const game = {
     over: false,
     active: true,
 }
