@@ -164,7 +164,7 @@ class Grid {
 
 const player = new Player();
 const projectiles = [];
-const grids = [new Grid()];
+const grids = [];
 
 const keys = {
     a: {
@@ -177,6 +177,9 @@ const keys = {
         pressed: false,
     },
 }
+
+let frames = 0;
+let randomInterval = Math.trunc((Math.random() * 500) + 500);
 
 // game loop
 function animate() {
@@ -214,6 +217,15 @@ function animate() {
         player.velocity.x = 0;
         player.rotation = 0;
     }
+
+    // spawning enemies
+    if (frames % randomInterval === 0) {
+        grids.push(new Grid())
+        randomInterval = Math.trunc((Math.random() * 500) + 500);
+        frames = 0;
+    }
+
+    frames++
 }
 
 animate();
