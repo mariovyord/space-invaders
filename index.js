@@ -1,6 +1,7 @@
 const canvas = document.querySelector('canvas');
 const c = canvas?.getContext('2d');
 
+// constants
 const PLAYER_SPEED = 7;
 const PLAYER_ROTATION = 0.15;
 const PROJECTILE_SPEED = -15;
@@ -166,6 +167,7 @@ const player = new Player();
 const projectiles = [];
 const grids = [];
 
+// button press 
 const keys = {
     a: {
         pressed: false,
@@ -179,6 +181,7 @@ const keys = {
 }
 
 let frames = 0;
+// interval for spawning enemies
 let randomInterval = Math.trunc((Math.random() * 500) + 500);
 
 // game loop
@@ -201,7 +204,7 @@ function animate() {
     })
 
     // update grid
-    grids.forEach(grid => {
+    grids.forEach((grid, gridIndex) => {
         grid.update()
         grid.invaders.forEach((invader, invaderIndex) => {
             invader.update({ velocity: grid.velocity })
@@ -217,16 +220,28 @@ function animate() {
                         const invaderFound = grid.invaders.find(currentInvader => currentInvader === invader)
                         const projectileFound = projectiles.find(currentProjectile => currentProjectile === projectile)
 
+                        // remove invader and projectile
                         if (invaderFound && projectileFound) {
                             grid.invaders.splice(invaderIndex, 1)
                             projectiles.splice(projectileIndex, 1)
+
+                            if (grid.invaders.length > 0) {
+                                const firstInvader = grid.invaders[0];
+                                const lastInvader = grid.invaders[grid.invaders.length - 1];
+                                grid.width = lastInvader.position.x - firstInvader.position.x + lastInvader.width;
+
+                                grid.position.x = firstInvader.position.x;
+                            } else {
+                                // clear empty grids if empty
+                                grids.splice(gridIndex, 1)
+                            }
                         }
                     }, 0)
                 }
             })
         })
     })
-
+    // move player
     if (keys.a.pressed && player.position.x >= 0) {
         player.velocity.x = -Math.abs(PLAYER_SPEED);
         player.rotation = -Math.abs(PLAYER_ROTATION);
@@ -247,7 +262,7 @@ function animate() {
 
     frames++
 }
-
+// start game
 animate();
 
 // move player
@@ -277,7 +292,7 @@ window.addEventListener('keydown', (e) => {
             break;
     }
 })
-
+// clear button press
 window.addEventListener('keyup', (e) => {
     const key = e.key;
     switch (key) {
