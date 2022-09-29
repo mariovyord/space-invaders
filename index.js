@@ -266,12 +266,18 @@ function startGame() {
         if (game.over) return;
 
         const key = e.key;
-
+        console.log(key);
         switch (key) {
             case 'a':
                 keys.a.pressed = true;
                 break;
+            case 'ArrowLeft':
+                keys.a.pressed = true;
+                break;
             case 'd':
+                keys.d.pressed = true;
+                break;
+            case 'ArrowRight':
                 keys.d.pressed = true;
                 break;
             case ' ':
@@ -297,7 +303,13 @@ function startGame() {
             case 'a':
                 keys.a.pressed = false;
                 break;
+            case 'ArrowLeft':
+                keys.a.pressed = false;
+                break;
             case 'd':
+                keys.d.pressed = false;
+                break;
+            case 'ArrowRight':
                 keys.d.pressed = false;
                 break;
             case ' ':
