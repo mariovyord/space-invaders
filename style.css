@@ -26,3 +26,67 @@ body {
     position: relative;
     border: 2px solid white;
 }
+
+/* Start Menu */
+.start {
+    text-align: center;
+}
+
+.start__heading__wrapper {
+    position: relative;
+}
+
+.start__headings {
+    font-family: 'Teko', sans-serif;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 6rem;
+    display: block;
+    transform: perspective(7cm) rotateX(-35deg);
+}
+
+.start__title {
+    color:#FFF935;
+}
+
+.start__btn {
+    font-family: 'Teko', sans-serif;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: white;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    margin-top: 2rem;
+}
+
+.start__btn:hover {
+    cursor: pointer;
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+  
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+  
+    40%, 60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+
+.start__title-shadow-one {
+    position: absolute;
+    top: -9px;
+    left: 0;
+    z-index: -1;
+    color: #AF150A;
+}
