@@ -3,7 +3,7 @@ import { Particle } from "./src/classes/Particle.js";
 import { Grid } from "./src/classes/Grid.js";
 import { Invader } from "./src/classes/Invader.js";
 import { InvaderProjectile } from "./src/classes/InvaderProjectile.js";
-import { Projectile } from "./src/classes/Projectile.js";
+import { PlayerProjectile } from "./src/classes/PlayerProjectile.js";
 
 import { c, canvas } from "./src/canvas.js";
 import {
@@ -33,7 +33,7 @@ function backToStart() {
 
 function startGame() {
     const player = new Player();
-    const projectiles = [];
+    const playerProjectiles = [];
     const grids = [];
     const particles = [];
     const invaderProjectiles = [];
@@ -122,7 +122,6 @@ function startGame() {
             if (particle.position.y - particle.radius >= canvas.height) {
                 particle.position.x = Math.random() * canvas.width;
                 particle.position.y = -particle.radius;
-
             }
 
             if (particle.opacity <= 0) {
@@ -173,11 +172,11 @@ function startGame() {
             }
         })
 
-        projectiles.forEach((projectile, i) => {
+        playerProjectiles.forEach((projectile, i) => {
             if (projectile.position.y + projectile.radius <= 0) {
                 setTimeout(() => {
                     // clear projectile if it goes outside of canvas
-                    projectiles.splice(i, 1)
+                    playerProjectiles.splice(i, 1)
                 }, 0)
             } else {
                 projectile.update();
@@ -197,7 +196,7 @@ function startGame() {
                 invader.update({ velocity: grid.velocity })
 
                 // projectiles hit enemies
-                projectiles.forEach((projectile, projectileIndex) => {
+                playerProjectiles.forEach((projectile, projectileIndex) => {
                     if (projectile.position.y - projectile.radius <= invader.position.y + invader.height
                         && projectile.position.x + projectile.radius >= invader.position.x
                         && projectile.position.x - projectile.radius <= invader.position.x + invader.width
@@ -205,7 +204,7 @@ function startGame() {
                     ) {
                         setTimeout(() => {
                             const invaderFound = grid.invaders.find(currentInvader => currentInvader === invader)
-                            const projectileFound = projectiles.find(currentProjectile => currentProjectile === projectile)
+                            const projectileFound = playerProjectiles.find(currentProjectile => currentProjectile === projectile)
 
                             // remove invader and projectile
                             if (invaderFound && projectileFound) {
@@ -219,7 +218,7 @@ function startGame() {
                                 })
 
                                 grid.invaders.splice(invaderIndex, 1)
-                                projectiles.splice(projectileIndex, 1)
+                                playerProjectiles.splice(projectileIndex, 1)
 
                                 if (grid.invaders.length > 0) {
                                     const firstInvader = grid.invaders[0];
@@ -264,9 +263,8 @@ function startGame() {
     // move player
     window.addEventListener('keydown', (e) => {
         if (game.over) return;
-
         const key = e.key;
-        console.log(key);
+
         switch (key) {
             case 'a':
                 keys.a.pressed = true;
@@ -282,17 +280,19 @@ function startGame() {
                 break;
             case ' ':
                 keys.space.pressed = true;
-                projectiles.push(
-                    new Projectile({
-                        position: {
-                            x: player.position.x + player.width / 2,
-                            y: player.position.y,
-                        },
-                        velocity: {
-                            x: 0,
-                            y: PROJECTILE_SPEED,
-                        }
-                    }))
+                if (playerProjectiles.length <= 1) {
+                    playerProjectiles.push(
+                        new PlayerProjectile({
+                            position: {
+                                x: player.position.x + player.width / 2,
+                                y: player.position.y,
+                            },
+                            velocity: {
+                                x: 0,
+                                y: PROJECTILE_SPEED,
+                            }
+                        }))
+                }
                 break;
         }
     })
