@@ -90,3 +90,7 @@ body {
     z-index: -1;
     color: #AF150A;
 }
+
+.hidden {
+    display: none;
+}
